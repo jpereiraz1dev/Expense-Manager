@@ -1,66 +1,21 @@
-💰 Expense Manager
-A sleek and efficient personal finance dashboard built with Django. This application helps users track their daily spending, manage fixed expenses, and visualize their financial health through interactive reports.
-
-🚀 Features
-- Financial Dashboard: A high-level overview of your balances, incomes, and expenses.
-
-- Interactive Charts: Visual data representation using Chart.js to track spending patterns.
-
-- Expense Categorization: Manage different types of costs, including fixed bills, investments, and installments.
-
-- Planning Tools: Set financial goals and monitor your progress.
-
-- Responsive UI: A modern, mobile-friendly interface built with Tailwind CSS.
-
-🛠️ Tech Stack
-- Backend: Django (Python)- 
-
-- Frontend: Tailwind CSS & JavaScript 
-
-- Data Visualization: Chart.js
-
-- Environment Management: python-dotenv (for security)
-
-- Database: SQLite (Development) / PostgreSQL (Optional)
-
-🔧 Installation & Setup
-Clone the repository:
-
-Bash
-git clone https://github.com/your-username/expense-manager.git
+💰 Expense ManagerA sleek and efficient personal finance dashboard built with Django. This application helps users track their daily spending, manage fixed expenses, and visualize their financial health through interactive reports.🚀 FeaturesFinancial Dashboard: A high-level overview of balances, incomes, and expenses.Interactive Charts: Visual data representation using Chart.js to track spending patterns.Expense Categorization: Manage different types of costs (fixed bills, investments, and installments).Planning Tools: Set financial goals and monitor your progress in real-time.Responsive UI: A modern, mobile-friendly interface built with Tailwind CSS.🛠 Tech StackTechnologyDescriptionPython 3Core programming languageDjangoHigh-level Web FrameworkTailwind CSSUtility-first CSS framework for stylingChart.jsFlexible JavaScript charting for designers & developersSQLiteLightweight database for developmentpython-dotenvEnvironment variable management for security📂 Project StructureA simplified view of the main application files:Plaintextrecords/
+│
+├── static/          # Assets (CSS, JS, Favicon)
+│   └── records/     # App-specific namespace
+├── templates/       # HTML User Interface
+│   └── records/     # App-specific namespace
+├── models.py        # Database definitions (Expenses, Category)
+├── views.py         # Business logic and route control
+└── urls.py          # App-specific URL routing
+⚙️ How to Run the ProjectFollow the steps below to set up the environment locally:1. Clone the repositoryBashgit clone https://github.com/your-username/expense-manager.git
 cd expense-manager
-Create and activate a virtual environment:
-
-Bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-Install dependencies:
-
-Bash
-pip install -r requirements.txt
-Set up Environment Variables:
-Create a .env file in the root directory and add your SECRET_KEY and DEBUG status:
-
-Plaintext
-SECRET_KEY=your_secret_key_here
+2. Set up Virtual EnvironmentWindows:Bashpython -m venv venv
+venv\Scripts\activate
+Linux/Mac:Bashpython3 -m venv venv
+source venv/bin/activate
+3. Install DependenciesBashpip install -r requirements.txt
+4. Configure Environment VariablesCreate a .env file in the root directory:PlaintextSECRET_KEY=your_secret_key_here
 DEBUG=True
-Run migrations and start the server:
-
-Bash
-python manage.py migrate
+5. Database Setup & RunBashpython manage.py migrate
 python manage.py runserver
-
-🗺️ Roadmap (Next Steps)
-This project is currently under active development. Here are the planned features and improvements:
-
-- Frontend Interactivity: Implement HTMX or Alpine.js to make all buttons and forms interactive without full page reloads.
-
-- Automatic Month Transition: Develop logic to automatically detect the current month and filter expenses/reports accordingly.
-
-- Multi-user Support: Implement a full Authentication System (Sign Up/Login) so multiple users can manage their own private finances securely.
-
-- Data Export: Add functionality to export reports to PDF or Excel.
-
-📝 License
-This project is licensed under the MIT License.
-
+The project will be available at http://127.0.0.1:8000.🔐 SecurityImportant: The SECRET_KEY and any sensitive credentials must be stored in environment variables (.env). Never version production keys in your public repository.📌 Roadmap (Next Steps)[ ] Frontend Interactivity: Implement HTMX or Alpine.js for seamless UI updates.[ ] Automatic Month Transition: Logic to auto-detect and filter the current month.[ ] Multi-user Support: Full authentication system (Sign Up/Login).[ ] Data Export: Functionality to export financial reports to PDF or Excel.[ ] Responsive UI: Further UX improvements for mobile devices.👨‍💻 AuthorDeveloped with ☕ by João Pedro.
