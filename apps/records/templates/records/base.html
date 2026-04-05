@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Expense Manager | Dashboard{% endblock %}</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+    <link rel="shortcut icon" href="{% static 'records/favicon.ico' %}" type="image/x-icon">
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="flex h-screen">
+        <aside class="w-64 bg-indigo-900 text-white p-6 hidden md:block">
+    <h1 class="text-2xl font-bold mb-10">💰 MyFinances</h1>
+    
+    <nav class="space-y-2">
+        {% with url_name=request.resolver_match.url_name %}
+        
+        <a href="{% url 'index' %}" 
+           class="block py-2.5 px-4 rounded transition-colors {% if url_name == 'index' %} bg-indigo-950 font-bold border-l-4 border-indigo-400 {% else %} hover:bg-indigo-800 {% endif %}">
+           Dashboard
+        </a>
+
+        <a href="{% url 'fixos' %}" 
+           class="block py-2.5 px-4 rounded transition-colors {% if url_name == 'fixos' %} bg-indigo-950 font-bold border-l-4 border-indigo-400 {% else %} hover:bg-indigo-800 {% endif %}">
+           Fixos
+        </a>
+
+        <a href="{% url 'records' %}" 
+           class="block py-2.5 px-4 rounded transition-colors {% if url_name == 'records' %} bg-indigo-950 font-bold border-l-4 border-indigo-400 {% else %} hover:bg-indigo-800 {% endif %}">
+           Relatórios
+        </a>
+
+        <a href="{% url 'investimentos' %}" 
+           class="block py-2.5 px-4 rounded transition-colors {% if url_name == 'investimentos' %} bg-indigo-950 font-bold border-l-4 border-indigo-400 {% else %} hover:bg-indigo-800 {% endif %}">
+           Investimentos
+        </a>
+
+        <a href="{% url 'parcelas' %}" 
+           class="block py-2.5 px-4 rounded transition-colors {% if url_name == 'parcelas' %} bg-indigo-950 font-bold border-l-4 border-indigo-400 {% else %} hover:bg-indigo-800 {% endif %}">
+           Parcelas
+        </a>
+
+        <a href="{% url 'planejamento' %}" 
+           class="block py-2.5 px-4 rounded transition-colors {% if url_name == 'planejamento' %} bg-indigo-950 font-bold border-l-4 border-indigo-400 {% else %} hover:bg-indigo-800 {% endif %}">
+           Planejamento
+        </a>
+
+        {% endwith %}
+    </nav>
+</aside>
+
+        <main class="flex-1 p-8 overflow-y-auto">
+            {% block content %}
+            {% endblock %}
+        </main>
+    </div>
+
+    {% block scripts %}
+    {% endblock %}
+
+</body>
+</html>

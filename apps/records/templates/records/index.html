@@ -1,0 +1,126 @@
+{% extends 'records/base.html' %}
+
+{% block title %}Expense Manager | Dashboard{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto p-4">
+
+    {% if total_gasto_real > total_planejado %}
+    <div class="mb-6 bg-red-50 border-l-8 border-red-600 p-4 rounded-xl shadow-sm">
+        <div class="flex items-center gap-3">
+            <span class="text-2xl">⚠️</span>
+            <div>
+                <h4 class="font-black text-red-800 uppercase text-sm tracking-widest">Atenção: Limite Excedido</h4>
+                <p class="text-red-700 font-medium">
+                    Seu gasto atual superou o planejamento em <span class="font-black underline">R$ {{ valor_excedido|floatformat:2 }}</span>.
+                </p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <header class="flex justify-between items-center mb-10">
+        <h2 class="text-3xl font-bold text-gray-800">Resumo de Gastos Mensais</h2>
+        <div class="text-sm text-gray-500">Abril, 2026</div>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <div class="lg:col-span-2 bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center">
+            <div class="flex justify-between items-center w-full mb-6">
+                <h3 class="text-xl font-semibold text-gray-800">Distribuição de Orçamento</h3>
+                <a href="{% url 'add_gasto' %}" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold text-sm transition-all shadow-lg shadow-red-200 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
+                    </svg>
+                    Adicionar Gasto
+                </a>
+            </div>
+
+            <div class="relative w-full max-w-md flex flex-col items-center justify-center min-h-[350px]">
+                {% if total_gasto_real > 0 %}
+                    <canvas id="budgetChart"></canvas>
+                {% else %}
+                    <div class="text-center py-10">
+                        <div class="bg-gray-50 rounded-full h-24 w-24 flex items-center justify-center mx-auto mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <p class="text-gray-400 font-medium text-lg">Nenhum gasto registrado.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="space-y-6">
+            <div class="bg-gradient-to-br from-teal-900 to-green-500 p-6 rounded-2xl text-white shadow-lg">
+                <p class="text-teal-100 text-sm font-medium uppercase tracking-wider">Total a Gastar</p>
+                <h4 class="text-4xl font-bold">R$ {{ total_planejado|floatformat:2 }}</h4>
+            </div>
+
+            <div class="bg-gradient-to-br from-indigo-600 to-blue-500 p-6 rounded-2xl text-white shadow-lg">
+                <p class="text-indigo-100 text-sm font-medium uppercase tracking-wider">GASTO ATUAL</p>
+                <h4 class="text-4xl font-bold">R$ {{ total_gasto_real|floatformat:2 }}</h4>
+            </div>
+            
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    {% if total_gasto_real > 0 %}
+    <script>
+        const ctx = document.getElementById('budgetChart').getContext('2d');
+        const metasPlanejadas = {{ dados_planejados|safe }};
+
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: {{ labels|safe }}, 
+                datasets: [{
+                    data: {{ dados_gastos|safe }},
+                    backgroundColor: [
+    '#6366F1', // Lazer (Indigo)
+    '#22C55E', // Investimento (Green)
+    '#F59E0B', // Saúde (Amber)
+    '#EF4444', // Outros (Red)
+    '#A78BFA', // Parcelas (Violet claro)
+    '#06B6D4', // Gasto Fixo (Cyan)
+    '#EC4899'  // Estudo (Pink mais controlado)
+],
+                    borderWidth: 2,
+                    hoverOffset: 20
+                }]
+            },
+            options: {
+                cutout: '75%',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { padding: 20, usePointStyle: true, font: { size: 11, weight: '700' } }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let i = context.dataIndex;
+                                let real = context.raw;
+                                let meta = metasPlanejadas[i] || 0; // Evita erro se a lista de metas for menor
+                                return [
+                                    ` Gasto Real: R$ ${real.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`,
+                                    ` Meta Planejada: R$ ${meta.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`
+                                ];
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+    {% endif %}
+{% endblock %}

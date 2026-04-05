@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}Expense Manager | Novo Gasto{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="mb-8">
+        <a href="{% url 'index' %}" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center gap-1 mb-2">
+            ← Voltar para o Dashboard
+        </a>
+        <h2 class="text-3xl font-bold text-gray-800">Registrar Novo Gasto</h2>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+        <form method="POST" class="space-y-6">
+    {% csrf_token %}
+
+    <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-2">Valor do Gasto</label>
+        <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-500 font-bold">R$</span>
+            {{ form.valor }}
+        </div>
+        {{ form.valor.errors }}
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Data</label>
+            {{ form.data }}
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Categoria</label>
+            {{ form.tipo }}
+        </div>
+    </div>
+
+    <div id="div_meta_relacionada" class="hidden p-4 bg-indigo-50 border border-indigo-100 rounded-xl animate-fade-in">
+        <label class="block text-sm font-bold text-indigo-900 mb-2">Qual meta você está aportando?</label>
+        {{ form.meta_relacionada }}
+        <p class="text-[10px] text-indigo-400 mt-2 uppercase font-bold tracking-wider">Esse valor será somado ao progresso da meta.</p>
+    </div>
+
+    <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Descrição / Local</label>
+        {{ form.descricao }}
+    </div>
+
+    <button type="submit" 
+        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-indigo-200 transition-all transform hover:-translate-y-1">
+        Confirmar Registro
+    </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectTipo = document.getElementById('tipo_gasto');
+        const divMeta = document.getElementById('div_meta_relacionada');
+
+        function atualizarVisibilidade() {
+            // Pegamos o texto da opção selecionada (mais seguro que o ID se o ID mudar)
+            const textoSelecionado = selectTipo.options[selectTipo.selectedIndex].text.toUpperCase();
+            
+            if (textoSelecionado.includes('INVESTIMENTO')) {
+                divMeta.classList.remove('hidden');
+            } else {
+                divMeta.classList.add('hidden');
+            }
+        }
+
+        // Monitora a mudança
+        selectTipo.addEventListener('change', atualizarVisibilidade);
+
+        // Roda ao carregar (importante se o formulário voltar com erro de validação)
+        atualizarVisibilidade();
+    });
+</script>
+
+<style>
+    .animate-fade-in {
+        animation: fadeIn 0.3s ease-out;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-5px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+{% endblock %}

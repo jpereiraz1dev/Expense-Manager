@@ -1,0 +1,57 @@
+{% extends 'records/base.html' %}
+
+{% block title %}Expense Manager | Investimentos{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto p-4">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-black text-gray-800">Metas de Investimento</h2>
+        <a href="#" class="bg-indigo-600 text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-indigo-700 transition-all">
+            + Nova Meta
+        </a>
+    </div>
+
+    <div class="bg-slate-900 rounded-2xl p-6 mb-8 text-white flex justify-between items-center shadow-lg">
+        <span class="text-slate-400 font-bold uppercase text-xs tracking-widest">Total Geral Acumulado</span>
+        <span class="text-2xl font-black text-emerald-400">R$ {{ total_geral|floatformat:2 }}</span>
+    </div>
+
+    <div class="space-y-3">
+        {% for meta in metas %}
+        <div class="bg-white border border-gray-100 rounded-xl p-4 hover:shadow-md transition-shadow flex items-center justify-between">
+            
+            <div class="flex-1">
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="w-2 h-2 rounded-full {% if meta.prazo == 'CURTO' %}bg-blue-400{% else %}bg-purple-500{% endif %}"></span>
+                    <h4 class="font-bold text-gray-800 text-lg leading-none">{{ meta.item_nome }}</h4>
+                </div>
+                <span class="text-[10px] font-black text-gray-400 uppercase tracking-tighter">{{ meta.get_prazo_display }}</span>
+            </div>
+
+            <div class="flex gap-8 text-right items-center">
+                <div>
+                    <p class="text-[10px] text-gray-400 font-bold uppercase">Alvo</p>
+                    <p class="text-sm font-bold text-gray-600">R$ {{ meta.valor_alvo|floatformat:2 }}</p>
+                </div>
+
+                <div class="bg-emerald-50 px-4 py-2 rounded-lg border border-emerald-100">
+                    <p class="text-[10px] text-emerald-600 font-bold uppercase">Acumulado</p>
+                    <p class="text-lg font-black text-emerald-700">R$ {{ meta.total_acumulado|floatformat:2 }}</p>
+                </div>
+
+                <div class="w-16">
+                    <p class="text-[10px] text-gray-400 font-bold text-center mb-1">{{ meta.progresso_percentual }}%</p>
+                    <div class="w-full bg-gray-100 h-1.5 rounded-full">
+                        <div class="bg-indigo-500 h-1.5 rounded-full" style="width: {{ meta.progresso_percentual }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center py-12 border-2 border-dashed border-gray-200 rounded-2xl">
+            <p class="text-gray-400">Nenhuma meta cadastrada.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

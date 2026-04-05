@@ -1,0 +1,140 @@
+{% extends 'records/base.html' %}
+
+{% block title %}Expense Manager | Gastos Fixos{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto p-4">
+    
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+        <div>
+            <h2 class="text-3xl font-black text-gray-800">Fluxo de Fixos</h2>
+            <p class="text-gray-500 shadow-sm">Gerencie suas receitas e despesas recorrentes.</p>
+        </div>
+        
+        <button onclick="document.getElementById('modal-fixo').classList.remove('hidden')" 
+                class="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+            </svg>
+            Novo Lançamento Fixo
+        </button>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        
+        <section>
+            <div class="flex items-center gap-2 mb-4">
+                <div class="p-2 bg-emerald-100 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-700">Entradas / Receitas</h3>
+            </div>
+
+            <div class="space-y-3">
+                {% for item in entradas %}
+                <div class="bg-white border-l-4 border-emerald-500 rounded-xl p-4 shadow-sm flex justify-between items-center">
+                    <div>
+                        <p class="font-bold text-gray-800">{{ item.nome }}</p>
+                        <p class="text-xs text-gray-400 uppercase font-bold">Recorrência Mensal</p>
+                    </div>
+                    <span class="text-lg font-black text-emerald-600">R$ {{ item.valor|floatformat:2 }}</span>
+                </div>
+                {% empty %}
+                <p class="text-gray-400 italic text-sm">Nenhuma entrada fixa registrada.</p>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section>
+            <div class="flex items-center gap-2 mb-4">
+                <div class="p-2 bg-rose-100 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-700">Saídas / Despesas</h3>
+            </div>
+
+            <div class="space-y-3">
+                {% for item in saidas %}
+                <div class="bg-white border-l-4 border-rose-500 rounded-xl p-4 shadow-sm flex justify-between items-center">
+                    <div>
+                        <p class="font-bold text-gray-800">{{ item.nome }}</p>
+                        <p class="text-xs text-gray-400 uppercase font-bold">Vencimento Fixo</p>
+                    </div>
+                    <span class="text-lg font-black text-rose-600">R$ {{ item.valor|floatformat:2 }}</span>
+                </div>
+                {% empty %}
+                <p class="text-gray-400 italic text-sm">Nenhum gasto fixo registrado.</p>
+                {% endfor %}
+            </div>
+        </section>
+
+    </div>
+</div>
+
+<div id="modal-fixo" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl">
+        <h3 class="text-2xl font-black mb-6">Novo Registro Fixo</h3>
+        <form id = "form-fixo" method="POST">
+            {% csrf_token %}
+            <div class="mb-4">
+                <label class="block text-sm font-bold text-gray-700 mb-2">Nome do Lançamento</label>
+                <input type="text" name="nome" placeholder="Ex: Aluguel, Salário..." class="w-full border border-gray-200 rounded-lg p-3 outline-none focus:border-indigo-500 transition-all">
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Valor (R$)</label>
+                    <input type="number" step="0.01" name="valor" class="w-full border border-gray-200 rounded-lg p-3 outline-none focus:border-indigo-500 transition-all">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Tipo</label>
+                    <select name="fluxo" class="w-full border border-gray-200 rounded-lg p-3 outline-none focus:border-indigo-500 transition-all">
+                        <option value="ENTRADA">Entrada</option>
+                        <option value="SAIDA">Saída</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex gap-3">
+                <button type="button" onclick="document.getElementById('modal-fixo').classList.add('hidden')" 
+                        class="flex-1 px-4 py-3 bg-gray-100 text-gray-600 rounded-xl font-bold hover:bg-gray-200 transition-all">Cancelar</button>
+                <button type="submit" class="flex-1 px-4 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-all">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.getElementById('form-fixo').addEventListener('submit', function(e) {
+    e.preventDefault(); // <-- O PULO DO GATO: Isso impede o navegador de mudar de página
+
+    const formData = new FormData(this);
+    
+    // Envia os dados para a mesma URL da página atual
+    fetch(window.location.href, { 
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Se deu certo, fecha o modal e recarrega a página 
+            // (ou injeta o HTML se você quiser ser mais avançado)
+            window.location.reload(); 
+        } else {
+            alert('Erro ao salvar os dados.');
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+    });
+});
+</script>
+{% endblock %}

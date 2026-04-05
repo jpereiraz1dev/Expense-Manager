@@ -1,0 +1,96 @@
+{% extends 'records/base.html' %}
+
+{% block title %}Expense Manager | Parcelas{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto p-4">
+    
+    <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+        <div>
+            <h2 class="text-3xl font-black text-gray-800 tracking-tight">Controle de Parcelas</h2>
+            <p class="text-gray-500 font-medium">Gestão de compras parceladas e financiamentos.</p>
+        </div>
+        
+        <div class="flex items-center gap-6">
+
+            <div class="text-right border-l pl-6 border-gray-100">
+                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Comprometimento Mensal</p>
+                <h3 class="text-2xl font-black text-rose-600">R$ {{ total_parcelas_mes|floatformat:2 }}</h3>
+            </div>
+
+            <a href="#" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-sm transition-all flex items-center gap-2 group">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transition-transform group-hover:rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4" />
+                </svg>
+                Nova Parcela
+            </a>
+
+            
+        </div>
+    </header>
+
+    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-100">
+                <thead class="bg-gray-50/50">
+                    <tr>
+                        <th class="px-6 py-5 text-left text-xs font-black text-gray-400 uppercase tracking-widest">Descrição</th>
+                        <th class="px-6 py-5 text-left text-xs font-black text-gray-400 uppercase tracking-widest">Categoria</th>
+                        <th class="px-6 py-5 text-left text-xs font-black text-gray-400 uppercase tracking-widest">Progresso (Pagas/Totais)</th>
+                        <th class="px-6 py-5 text-left text-xs font-black text-gray-400 uppercase tracking-widest">Valor Mensal</th>
+                        <th class="px-6 py-5 text-right text-xs font-black text-gray-400 uppercase tracking-widest">Ações</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-50">
+                    {% for p in parcelas %}
+                    <tr class="hover:bg-slate-50/50 transition-colors group">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-black text-gray-800">{{ p.nome }}</div>
+                        </td>
+
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-3 py-1 text-[10px] font-black rounded-lg uppercase
+                                {% if p.tipo == 'LAZER' %} bg-amber-100 text-amber-600
+                                {% elif p.tipo == 'ESTUDO' %} bg-indigo-100 text-indigo-600
+                                {% elif p.tipo == 'INVESTIMENTO' %} bg-purple-100 text-purple-600
+                                {% else %} bg-slate-100 text-slate-500 {% endif %}">
+                                {{ p.get_tipo_display }}
+                            </span>
+                        </td>
+
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center gap-3 w-48">
+                                <div class="flex-1 bg-gray-100 h-2 rounded-full overflow-hidden">
+                                    <div class="bg-indigo-500 h-full rounded-full" 
+                                         style="width: {% widthratio p.parcelas_pagas p.parcelas_totais 100 %}%">
+                                    </div>
+                                </div>
+                                <span class="text-xs font-black text-gray-600">{{ p.parcelas_pagas }}/{{ p.parcelas_totais }}</span>
+                            </div>
+                        </td>
+
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="text-sm font-black text-rose-600">
+                                R$ {{ p.valor|floatformat:2 }}
+                            </span>
+                        </td>
+
+                        <td class="px-6 py-4 whitespace-nowrap text-right">
+                            <button class="text-gray-400 hover:text-indigo-600 transition-colors p-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                            </button>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="px-6 py-12 text-center text-gray-400 font-bold">Nenhuma parcela ativa encontrada.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

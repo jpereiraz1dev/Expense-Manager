@@ -1,0 +1,146 @@
+{% extends 'records/base.html' %}
+
+{% block title %}Expense Manager | Extrato Detalhado{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto p-4">
+    <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+        <div>
+            <h2 class="text-3xl font-black text-gray-800">Extrato Mensal</h2>
+            <p class="text-gray-500 font-medium">Acompanhe cada centavo que entra e sai.</p>
+        </div>
+        
+        <div class="flex flex-wrap gap-3">
+            <form method="GET" class="flex flex-wrap gap-2">
+                <div class="relative">
+                    <input type="text" name="descricao" placeholder="Buscar descrição..." 
+                           value="{{ request.GET.descricao }}"
+                           class="bg-white border border-gray-200 text-gray-700 py-2 px-4 pl-10 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 font-bold text-sm shadow-sm w-64">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400 absolute left-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+
+                <select name="mes" class="bg-white border border-gray-200 text-gray-700 py-2 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 font-bold text-sm shadow-sm">
+                    <option value="4">Abril, 2026</option>
+                    <option value="3">Março, 2026</option>
+                    <option value="2">Fevereiro, 2026</option>
+                </select>
+                
+                <button type="submit" class="bg-indigo-600 text-white py-2 px-4 rounded-xl hover:bg-indigo-700 transition shadow-sm font-bold text-sm">
+                    Filtrar
+                </button>
+
+                <button type="button" class="bg-white border border-gray-200 text-gray-700 py-2 px-4 rounded-xl hover:bg-gray-50 transition shadow-sm font-bold text-sm flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    PDF
+                </button>
+            </form>
+        </div>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-emerald-500">
+            <p class="text-xs text-gray-400 font-black uppercase tracking-wider mb-1">Total Entradas</p>
+            <h4 class="text-2xl font-black text-emerald-600">+ R$ {{ total_entradas|floatformat:2 }}</h4>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-rose-500">
+            <p class="text-xs text-gray-400 font-black uppercase tracking-wider mb-1">Total Saídas</p>
+            <h4 class="text-2xl font-black text-rose-600">- R$ {{ total_saidas|floatformat:2 }}</h4>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-indigo-500">
+            <p class="text-xs text-gray-400 font-black uppercase tracking-wider mb-1">Saldo Atual</p>
+            <h4 class="text-2xl font-black {% if saldo_atual >= 0 %}text-indigo-600{% else %}text-rose-700{% endif %}">
+                R$ {{ saldo_atual|floatformat:2 }}
+            </h4>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-10">
+        <a href="?tipo=" class="p-4 rounded-2xl border transition-all text-center {% if not request.GET.tipo %} border-slate-900 bg-slate-900 text-white shadow-lg {% else %} bg-white border-gray-100 text-gray-400 hover:bg-gray-50 {% endif %}">
+            <span class="text-[10px] font-black uppercase tracking-widest">Todos</span>
+        </a>
+        <a href="?tipo=FIXO" class="p-4 rounded-2xl border transition-all text-center {% if request.GET.tipo == 'FIXO' %} border-blue-500 bg-blue-50 text-blue-700 ring-2 ring-blue-100 {% else %} bg-white border-gray-100 text-gray-400 hover:bg-gray-50 {% endif %}">
+            <span class="text-[10px] font-black uppercase tracking-widest">Fixos</span>
+        </a>
+        <a href="?tipo=LAZER" class="p-4 rounded-2xl border transition-all text-center {% if request.GET.tipo == 'LAZER' %} border-amber-500 bg-amber-50 text-amber-700 ring-2 ring-amber-100 {% else %} bg-white border-gray-100 text-gray-400 hover:bg-gray-50 {% endif %}">
+            <span class="text-[10px] font-black uppercase tracking-widest">Lazer</span>
+        </a>
+        <a href="?tipo=INVESTIMENTO" class="p-4 rounded-2xl border transition-all text-center {% if request.GET.tipo == 'INVESTIMENTO' %} border-purple-500 bg-purple-50 text-purple-700 ring-2 ring-purple-100 {% else %} bg-white border-gray-100 text-gray-400 hover:bg-gray-50 {% endif %}">
+            <span class="text-[10px] font-black uppercase tracking-widest">Investimentos</span>
+        </a>
+        <a href="?tipo=SAUDE" class="p-4 rounded-2xl border transition-all text-center {% if request.GET.tipo == 'SAUDE' %} border-emerald-500 bg-emerald-50 text-emerald-700 ring-2 ring-emerald-100 {% else %} bg-white border-gray-100 text-gray-400 hover:bg-gray-50 {% endif %}">
+            <span class="text-[10px] font-black uppercase tracking-widest">Saúde</span>
+        </a>
+        <a href="?tipo=ESTUDO" class="p-4 rounded-2xl border transition-all text-center {% if request.GET.tipo == 'ESTUDO' %} border-indigo-500 bg-indigo-50 text-indigo-700 ring-2 ring-indigo-100 {% else %} bg-white border-gray-100 text-gray-400 hover:bg-gray-50 {% endif %}">
+            <span class="text-[10px] font-black uppercase tracking-widest">Estudo</span>
+        </a>
+    </div>
+
+    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-100">
+                <thead class="bg-gray-50/50">
+                    <tr>
+                        <th class="px-6 py-5 text-left text-xs font-black text-gray-400 uppercase tracking-widest">Data</th>
+                        <th class="px-6 py-5 text-left text-xs font-black text-gray-400 uppercase tracking-widest">Descrição</th>
+                        <th class="px-6 py-5 text-left text-xs font-black text-gray-400 uppercase tracking-widest">Categoria</th>
+                        <th class="px-6 py-5 text-left text-xs font-black text-gray-400 uppercase tracking-widest">Valor</th>
+                        <th class="px-6 py-5 text-right text-xs font-black text-gray-400 uppercase tracking-widest">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-50">
+                    {% for item in extrato %}
+                    <tr class="hover:bg-slate-50/50 transition-colors group">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-500">
+                            {% if item.data == 'Todo mês' %}
+                                <span class="flex items-center gap-1 text-indigo-500 font-black">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                    </svg>
+                                    Fixo
+                                </span>
+                            {% else %}
+                                {{ item.data|date:"d M, Y" }}
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-black text-gray-800">
+                            {{ item.descricao }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            {% if item.categoria == 'Fixo' %}
+                                <span class="px-3 py-1 text-[10px] font-black bg-blue-100 text-blue-700 rounded-lg uppercase">Gasto Fixo</span>
+                            {% elif item.categoria == 'INVESTIMENTO' %}
+                                <span class="px-3 py-1 text-[10px] font-black bg-purple-100 text-purple-700 rounded-lg uppercase">Investimento</span>
+                            {% elif item.categoria == 'LAZER' %}
+                                <span class="px-3 py-1 text-[10px] font-black bg-amber-100 text-amber-700 rounded-lg uppercase">Lazer</span>
+                            {% elif item.categoria == 'ESTUDO' %}
+                                <span class="px-3 py-1 text-[10px] font-black bg-indigo-100 text-indigo-700 rounded-lg uppercase">Estudo</span>
+                            {% else %}
+                                <span class="px-3 py-1 text-[10px] font-black bg-slate-100 text-slate-600 rounded-lg uppercase">{{ item.categoria }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-black {% if item.fluxo == 'ENTRADA' %}text-emerald-600{% else %}text-rose-600{% endif %}">
+                            {% if item.fluxo == 'ENTRADA' %}+{% else %}-{% endif %} R$ {{ item.valor|floatformat:2 }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-[10px] font-bold {% if item.status == 'Confirmado' %}text-gray-400{% else %}text-emerald-500 italic{% endif %}">
+                            {{ item.status }}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="px-6 py-20 text-center">
+                            <p class="text-gray-400 font-bold">Nenhuma movimentação encontrada.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
